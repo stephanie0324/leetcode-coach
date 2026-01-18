@@ -12,16 +12,16 @@
   "topics": {
     "arrays-hashing": {
       "mastery_level": 0.0,
-      "problems_solved": 1,
+      "problems_solved": 2,
       "total_problems": 1,
       "weak_concepts": [],
       "strong_concepts": [],
-      "last_practiced": "2026-01-18T20:26:02.892749",
+      "last_practiced": "2026-01-18T20:42:19.193125",
       "first_attempt": null,
-      "practice_sessions": 2,
+      "practice_sessions": 4,
       "total_time_spent": 0,
       "average_solve_time": null,
-      "problems_attempted": 2
+      "problems_attempted": 3
     },
     "linked-lists": {
       "mastery_level": 0.0,
@@ -165,6 +165,16 @@
         "sorting"
       ],
       "last_attempt": "2026-01-18T20:26:02.892719"
+    },
+    "121_best_time_to_buy_and_sell_stock": {
+      "topic": "arrays-hashing",
+      "attempts": 2,
+      "solved": true,
+      "approaches_tried": [
+        "two_pointers",
+        "iteration"
+      ],
+      "last_attempt": "2026-01-18T20:42:19.193106"
     }
   },
   "review_queue": [],
@@ -231,6 +241,25 @@
       "topic": "arrays-hashing",
       "approaches": [
         "hash_map"
+      ],
+      "result": "solved"
+    },
+    {
+      "timestamp": "2026-01-18T20:38:36.367144",
+      "problem": "121_best_time_to_buy_and_sell_stock",
+      "topic": "arrays-hashing",
+      "approaches": [
+        "two_pointers",
+        "iteration"
+      ],
+      "result": "solved"
+    },
+    {
+      "timestamp": "2026-01-18T20:42:19.193092",
+      "problem": "121_best_time_to_buy_and_sell_stock",
+      "topic": "arrays-hashing",
+      "approaches": [
+        "iteration"
       ],
       "result": "solved"
     }

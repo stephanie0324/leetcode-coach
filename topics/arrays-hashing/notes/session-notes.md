@@ -2,6 +2,52 @@
 
 *Auto-generated practice log. Personal insights and AI feedback from each session.*
 
+### 2026-01-18 - Best Time to Buy and Sell Stock (Easy)
+**Time**: Unknown | **Result**: ✅ Solved | **Approach**: Iteration
+
+#### Solution Summary
+- Implemented using iteration approach
+- Code length: 248 words, 58 lines
+- Difficulty: Easy
+
+#### AI Feedback Highlights
+- ✅ What's working: The solution correctly implements the one-pass approach, keeping track of the minimum price seen so far and updating the maximum profit. This is an efficient O(n) time complexity solution.
+- ⚠️ Could improve: The function lacks type hints for input and return values. Adding these would improve code readability and make it easier to understand the expected input and output types.
+- 🚀 Optimization: While the current implementation is already optimal in terms of time complexity, you could consider using a more descriptive variable name instead of `price`. For example, `current_price` would make the code slightly more self-documenting.
+
+#### Personal Reflection
+*Using two pointers to solve, may miss the optimal solution in some cases. The right pointer (r) starts from the end and moves left, which can lead to overlooking better buy-sell opportunities earlier in the array.*
+
+#### Related Concepts
+- Patterns: iteration
+- Topic: Arrays & Hashing
+
+---
+
+
+### 2026-01-18 - Best Time to Buy and Sell Stock (Easy)
+**Time**: Unknown | **Result**: ✅ Solved | **Approach**: Two Pointers, Iteration
+
+#### Solution Summary
+- Implemented using two pointers, iteration approach
+- Code length: 261 words, 60 lines
+- Difficulty: Easy
+
+#### AI Feedback Highlights
+- ✅ What's working: The solution correctly uses two pointers (l and r) to traverse the array, which is a good approach for this problem. It also maintains a max_profit variable to keep track of the best profit found so far.
+- ⚠️ Could improve: The current implementation may miss the optimal solution in some cases. The right pointer (r) starts from the end and moves left, which can lead to overlooking better buy-sell opportunities earlier in the array.
+- 🚀 Optimization: Implement a single-pass solution that moves from left to right, keeping track of the minimum price seen so far and updating the max profit at each step. This approach would be more efficient (O(n) time complexity) and simpler to understand. Here's a sketch of the improved algorithm:
+
+#### Personal Reflection
+*Add your thoughts here: What was challenging? What did you learn?*
+
+#### Related Concepts
+- Patterns: two_pointers, iteration
+- Topic: Arrays & Hashing
+
+---
+
+
 ### 2026-01-18 - Two Sum
 **Time**: Unknown | **Result**: ✅ Solved | **Approach**: Hash Map
 
@@ -29,7 +75,6 @@
 
 #### Solution Summary
 - Implemented using hash map, two pointers, iteration, sorting approach
-- Code length: 264 words, 67 lines
 
 #### AI Feedback Highlights
 - 1. ✅ What's correct about this solution:
@@ -37,7 +82,7 @@
 - 3. 🚀 Optimization suggestions:
 
 #### Personal Reflection
-*Add your thoughts here: What was challenging? What did you learn?*
+*Since I need to return the indices, sorting will create new index, when sorting is not allowed, hash map is a good way to approach*
 
 #### Related Concepts
 - Patterns: hash_map, two_pointers, iteration, sorting
