@@ -23,14 +23,6 @@
 
 *No overview available yet.*
 
-
-
----
-
-## 💡 Problems in This Topic
-
-*No problems available yet.*
-
 ---
 
 ## 📝 Your Practice Sessions

@@ -78,21 +78,19 @@ class WikiContentProcessor:
         print("✅ Created dashboard: Home.md")
 
     def create_consolidated_topic_page(self, topic_name):
-        """Create ONE comprehensive page per topic with everything."""
+        """Create ONE clean, simplified page per topic."""
         topic_path = self.source_dir / "topics" / topic_name
         if not topic_path.exists():
             return
 
         print(f"📁 Processing topic: {topic_name}")
 
-        # Read all content for this topic
+        # Read only essential content for this topic
         overview_content = self.get_topic_overview(topic_path)
-        concepts_content = self.get_topic_concepts(topic_path)
         session_notes = self.get_session_notes(topic_path)
-        problems_content = self.get_problems_content(topic_path)
         progress_stats = self.get_topic_stats(topic_name)
 
-        # Build consolidated page
+        # Build simplified page (no more problems section, no concepts section)
         topic_display = topic_name.replace('-', ' & ').title()
 
         consolidated_content = f"""# {topic_display}
@@ -112,14 +110,6 @@ class WikiContentProcessor:
 ## 📖 Overview & Key Concepts
 
 {overview_content}
-
-{concepts_content}
-
----
-
-## 💡 Problems in This Topic
-
-{problems_content}
 
 ---
 
@@ -154,7 +144,7 @@ class WikiContentProcessor:
 """
 
     def get_topic_overview(self, topic_path):
-        """Extract overview content from topic README."""
+        """Extract overview content from topic README - simplified version."""
         readme_path = topic_path / "README.md"
         if not readme_path.exists():
             return "*No overview available yet.*"
@@ -169,31 +159,8 @@ class WikiContentProcessor:
 
         return content.strip()
 
-    def get_topic_concepts(self, topic_path):
-        """Extract key concepts, but streamlined."""
-        concepts_path = topic_path / "notes" / "concepts.md"
-        if not concepts_path.exists():
-            return ""
-
-        with open(concepts_path, 'r') as f:
-            content = f.read()
-
-        # Take only the first few key patterns, not the entire file
-        lines = content.split('\n')
-        result_lines = []
-        pattern_count = 0
-
-        for line in lines:
-            if line.startswith('## ') and 'Pattern' in line:
-                pattern_count += 1
-                if pattern_count > 3:  # Only show first 3 patterns
-                    break
-            result_lines.append(line)
-
-        return '\n'.join(result_lines[:100])  # Limit length
-
     def get_session_notes(self, topic_path):
-        """Get recent practice sessions."""
+        """Get practice sessions in expandable format."""
         sessions_path = topic_path / "notes" / "session-notes.md"
         if not sessions_path.exists():
             return "*No practice sessions yet. Use `coach judge <problem-file>` to start!*"
@@ -201,50 +168,8 @@ class WikiContentProcessor:
         with open(sessions_path, 'r') as f:
             content = f.read()
 
-        # Extract only recent sessions (first few entries)
-        lines = content.split('\n')
-        session_lines = []
-        session_count = 0
-
-        for line in lines:
-            if line.startswith('### ') and any(month in line for month in ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']):
-                session_count += 1
-                if session_count > 5:  # Only show 5 most recent sessions
-                    break
-            session_lines.append(line)
-
-        if not session_lines:
-            return "*No practice sessions yet. Use `coach judge <problem-file>` to start!*"
-
-        return '\n'.join(session_lines[:50])  # Limit to ~50 lines
-
-    def get_problems_content(self, topic_path):
-        """Create a clean problems section."""
-        problems_path = topic_path / "problems"
-        if not problems_path.exists():
-            return "*No problems available yet.*"
-
-        problems_list = []
-        for problem_file in problems_path.glob("*.md"):
-            problem_name = problem_file.stem.replace('-', ' ').title()
-
-            # Read first few lines to get description
-            with open(problem_file, 'r') as f:
-                content = f.read()
-
-            lines = content.split('\n')
-            description = "Practice problem"
-            for line in lines[:10]:
-                if line.strip() and not line.startswith('#') and not line.startswith('*') and len(line.strip()) > 20:
-                    description = line.strip()[:100] + "..."
-                    break
-
-            problems_list.append(f"### {problem_name}\n{description}\n")
-
-        if not problems_list:
-            return "*No problems available yet.*"
-
-        return '\n'.join(problems_list)
+        # Return the full content as it's already in the right format
+        return content.strip()
 
     def wiki_safe_filename(self, name):
         """Convert filename to wiki-safe format."""
