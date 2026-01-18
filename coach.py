@@ -488,22 +488,36 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
     # Create difficulty emoji
     difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
 
-    # Create new consolidated entry with improved format
+    # Format personal notes as bullet points
+    if personal_notes_text and personal_notes_text != "Add your thoughts here: What was challenging? What did you learn?":
+        formatted_notes = []
+        for note in personal_notes_text.split(" | "):
+            if note.strip():
+                formatted_notes.append(f"- {note.strip()}")
+        personal_notes_bullets = "\n".join(formatted_notes)
+    else:
+        personal_notes_bullets = "- Add your thoughts here: What was challenging?\n- What did you learn?\n- What patterns did you recognize?"
+
+    # Create new consolidated entry with everything in expandable block
     new_entry = f"""
-### {date_str} - {problem_name}
-**Time**: {time_str} | **Result**: {result} | **Approach**: {approach_str} | **Difficulty**: {difficulty_emoji} {difficulty}
-
 <details>
-<summary><strong>📋 Latest AI Feedback</strong></summary>
+<summary><strong>{date_str} - {problem_name}</strong> | Time: {time_str} | Result: {result} | Approach: {approach_str} | Difficulty: {difficulty_emoji} {difficulty}</summary>
 
-- ✅ **What's working:** {working_well}
-- ⚠️ **Could improve:** {improvements}
-- 🚀 **Optimization:** {optimization}
+### AI Feedback Analysis
+
+**What's working well:**
+{working_well}
+
+**Areas for improvement:**
+{improvements}
+
+**Optimization opportunities:**
+{optimization}
+
+### Personal Learning Notes
+{personal_notes_bullets}
 
 </details>
-
-#### Personal Notes
-*{personal_notes_text}*
 
 ---
 """
