@@ -66,4 +66,4 @@ jobs:
         Updated: $(date)
 
         Co-Authored-By: GitHub Actions <actions@github.com>" || echo "No changes to commit"
-        git push origin main
+        git push origin master
