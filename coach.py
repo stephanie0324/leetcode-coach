@@ -379,7 +379,7 @@ def extract_solution_approach(code, ai_feedback):
     return detected_approaches or ["unknown"]
 
 def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken=None):
-    """Generate and append session notes to the appropriate topic file."""
+    """Generate and append session notes to the appropriate topic file - with smart merging."""
     topic = detect_problem_topic(filename)
     if topic == "unknown":
         return
@@ -420,7 +420,6 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
 
     # Extract structured AI feedback (using new format)
     feedback_lines = ai_feedback.split('\n')
-    # Extract structured feedback from new format
     working_well = ""
     improvements = ""
     optimization = ""
@@ -428,68 +427,189 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
     for line in feedback_lines:
         line = line.strip()
         if line.startswith("✅") and "working well:" in line:
-            # Get the next line after this header
             idx = feedback_lines.index(line)
             if idx + 1 < len(feedback_lines):
                 working_well = feedback_lines[idx + 1].strip()
         elif line.startswith("⚠️") and "could be improved:" in line:
-            # Get the next line after this header
             idx = feedback_lines.index(line)
             if idx + 1 < len(feedback_lines):
                 improvements = feedback_lines[idx + 1].strip()
         elif line.startswith("🚀") and "Optimization opportunity:" in line:
-            # Get the next line after this header
             idx = feedback_lines.index(line)
             if idx + 1 < len(feedback_lines):
                 optimization = feedback_lines[idx + 1].strip()
 
-    # Create session entry with difficulty on main line
-    session_entry = f"""
-### {date_str} - {problem_name}
-**Time**: {time_str} | **Result**: {result} | **Approach**: {approach_str} | **Difficulty**: {difficulty}
+    notes_file = f"topics/{topic}/notes/session-notes.md"
 
-#### Solution Summary
-- Implemented using {approach_str.lower()} approach
+    # Read existing content
+    try:
+        with open(notes_file, 'r') as f:
+            existing_content = f.read()
+    except FileNotFoundError:
+        existing_content = f"""# {topic.replace('-', ' & ').title()} - Learning Journal
 
-#### AI Feedback Highlights
-- ✅ What's working: {working_well if working_well else 'Good implementation approach'}
-- ⚠️ Could improve: {improvements if improvements else 'Consider edge cases and error handling'}
-- 🚀 Optimization: {optimization if optimization else 'Look for opportunities to improve efficiency'}
-"""
-
-    session_entry += f"""
-#### Personal Reflection
-*Add your thoughts here: What was challenging? What did you learn?*
-
-#### Related Concepts
-- Patterns: {", ".join(approaches)}
-- Topic: {topic.replace('-', ' & ').title()}
+*Your practice journey with detailed learning progression*
 
 ---
+
 """
 
-    # Write to topic's session notes
-    notes_file = f"topics/{topic}/notes/session-notes.md"
-    try:
-        # Read existing content
-        try:
-            with open(notes_file, 'r') as f:
-                existing_content = f.read()
-        except FileNotFoundError:
-            existing_content = "# Session Notes\n\n*Practice sessions will be logged here*\n"
+    # Check if this problem already exists in notes
+    existing_problem_match = re.search(f"## 🎯 {re.escape(problem_name)}", existing_content)
 
-        # Insert new session after the header
+    if existing_problem_match:
+        # Update existing problem entry
+        updated_content = update_existing_problem_entry(
+            existing_content, problem_name, difficulty, approaches,
+            date_str, time_str, result, working_well, improvements, optimization
+        )
+    else:
+        # Create new problem entry with expandable format
+        new_problem_entry = create_new_problem_entry(
+            problem_name, difficulty, approaches, date_str, time_str,
+            result, working_well, improvements, optimization
+        )
+
+        # Insert after header
         lines = existing_content.split('\n')
-        header_end = 3  # After "# Session Notes" and description
+        header_end = 4  # After header and separator
+        lines.insert(header_end, new_problem_entry)
+        updated_content = '\n'.join(lines)
 
-        # Insert new session
-        lines.insert(header_end, session_entry)
-
+    # Write updated content
+    try:
         with open(notes_file, 'w') as f:
-            f.write('\n'.join(lines))
-
+            f.write(updated_content)
     except Exception as e:
         click.echo(f"⚠️ Could not update session notes: {e}")
+
+def create_new_problem_entry(problem_name, difficulty, approaches, date_str, time_str, result, working_well, improvements, optimization):
+    """Create a new problem entry with beautiful formatting."""
+    difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
+    result_emoji = "✅" if result == "✅ Solved" else "🔄"
+
+    return f"""## 🎯 {problem_name}
+
+> {difficulty_emoji} **{difficulty}** | {result_emoji} **Current Status: {result.replace('✅ ', '').replace('🔄 ', '')}** | 📅 **Last Practiced:** {date_str}
+
+### 🧭 Learning Journey
+
+<details>
+<summary><strong>📈 Practice Sessions</strong></summary>
+
+#### Session {date_str}
+- ⏱️ **Time:** {time_str}
+- 🛠️ **Approach:** {', '.join(approaches).replace('_', ' ').title()}
+- 🎯 **Result:** {result}
+
+</details>
+
+### 💡 Key Insights
+
+<details>
+<summary><strong>🤖 Latest AI Feedback</strong></summary>
+
+> #### What's Working Well
+> ✅ {working_well if working_well else 'Good implementation approach'}
+
+> #### Areas for Improvement
+> ⚠️ {improvements if improvements else 'Consider edge cases and error handling'}
+
+> #### Optimization Opportunities
+> 🚀 {optimization if optimization else 'Look for opportunities to improve efficiency'}
+
+</details>
+
+### 📝 Personal Learning Notes
+
+<details>
+<summary><strong>🧠 My Insights & Reflections</strong></summary>
+
+*Add your thoughts here: What was challenging? What patterns did you notice? What would you do differently next time?*
+
+#### Key Takeaways
+-
+
+#### Patterns Learned
+-
+
+#### Next Steps
+-
+
+</details>
+
+### 🔗 Implementation History
+- **{date_str}:** {', '.join(approaches).replace('_', ' ').title()} approach
+
+---
+
+"""
+
+def update_existing_problem_entry(content, problem_name, difficulty, approaches, date_str, time_str, result, working_well, improvements, optimization):
+    """Update existing problem entry with new practice session."""
+    difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
+    result_emoji = "✅" if result == "✅ Solved" else "🔄"
+
+    # Update the main header line with latest status and date
+    header_pattern = f"## 🎯 {re.escape(problem_name)}"
+    new_header = f"## 🎯 {problem_name}\n\n> {difficulty_emoji} **{difficulty}** | {result_emoji} **Current Status: {result.replace('✅ ', '').replace('🔄 ', '')}** | 📅 **Last Practiced:** {date_str}"
+
+    content = re.sub(
+        f"{header_pattern}.*?(?=###)",
+        f"{new_header}\n\n### 🧭 Learning Journey\n\n",
+        content,
+        flags=re.DOTALL
+    )
+
+    # Add new session to practice sessions (insert after sessions summary line)
+    new_session = f"""#### Session {date_str}
+- ⏱️ **Time:** {time_str}
+- 🛠️ **Approach:** {', '.join(approaches).replace('_', ' ').title()}
+- 🎯 **Result:** {result}
+
+"""
+
+    # Insert the new session right after the practice sessions details opening
+    sessions_pattern = f"({re.escape('<summary><strong>📈 Practice Sessions</strong></summary>')})"
+    content = re.sub(
+        sessions_pattern,
+        f"\\1\n\n{new_session}",
+        content
+    )
+
+    # Update the AI feedback section with latest feedback
+    ai_feedback_section = f"""
+> #### What's Working Well
+> ✅ {working_well if working_well else 'Good implementation approach'}
+
+> #### Areas for Improvement
+> ⚠️ {improvements if improvements else 'Consider edge cases and error handling'}
+
+> #### Optimization Opportunities
+> 🚀 {optimization if optimization else 'Look for opportunities to improve efficiency'}
+"""
+
+    # Replace the AI feedback content
+    content = re.sub(
+        r"(> #### What's Working Well.*?)(?=</details>)",
+        ai_feedback_section + "\n",
+        content,
+        flags=re.DOTALL
+    )
+
+    # Update implementation history
+    implementation_line = f"- **{date_str}:** {', '.join(approaches).replace('_', ' ').title()} approach"
+
+    if "### 🔗 Implementation History" in content:
+        # Add to existing history
+        history_pattern = "(### 🔗 Implementation History\n)"
+        content = re.sub(
+            history_pattern,
+            f"\\1{implementation_line}\n",
+            content
+        )
+
+    return content
 
 def update_progress_tracking(filename, code, ai_feedback, approaches):
     """Update progress.json with session data."""
