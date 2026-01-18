@@ -1,0 +1,59 @@
+{
+  "topic": "Linked Lists",
+  "category": "linear-data-structures",
+  "description": "Pointer manipulation, traversal, two-pointers, reversal, cycle detection",
+  "difficulty_range": "Easy to Hard",
+  "prerequisites": ["pointers-references", "basic-recursion", "null-handling"],
+  "related_topics": ["stacks-queues", "trees", "graph-traversal"],
+
+  "progress": {
+    "mastery_level": 0.0,
+    "problems_solved": 0,
+    "total_problems": 0,
+    "last_practiced": null,
+    "first_attempt": null,
+    "practice_sessions": 0
+  },
+
+  "weak_concepts": [],
+  "strong_concepts": [],
+
+  "problem_categories": {
+    "reversal": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "two_pointers": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "merge_operations": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "in_place_modification": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "cycle_detection": {
+      "problems": [],
+      "mastery": 0.0
+    }
+  },
+
+  "learning_path": [
+    "reverse_linked_list",
+    "merge_two_sorted_lists",
+    "remove_duplicates",
+    "middle_of_linked_list",
+    "remove_nth_from_end",
+    "linked_list_cycle",
+    "intersection_of_lists",
+    "palindrome_linked_list",
+    "reverse_nodes_in_k_group",
+    "copy_list_with_random_pointer"
+  ],
+
+  "companies": ["Google", "Meta", "Amazon", "Microsoft", "Apple"],
+  "interview_frequency": "High"
+}

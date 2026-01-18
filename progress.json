@@ -1,0 +1,204 @@
+{
+  "profile": {
+    "created": "2026-01-18",
+    "last_active": "2026-01-18",
+    "total_sessions": 0,
+    "total_problems_attempted": 0,
+    "total_problems_solved": 0,
+    "total_practice_time": 0,
+    "current_streak": 0,
+    "longest_streak": 0
+  },
+  "topics": {
+    "arrays-hashing": {
+      "mastery_level": 0.0,
+      "problems_solved": 0,
+      "total_problems": 1,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": null,
+      "first_attempt": null,
+      "practice_sessions": 0,
+      "total_time_spent": 0,
+      "average_solve_time": null
+    },
+    "linked-lists": {
+      "mastery_level": 0.0,
+      "problems_solved": 1,
+      "total_problems": 1,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": "2026-01-18T11:23:16.202469",
+      "first_attempt": null,
+      "practice_sessions": 1,
+      "total_time_spent": 0,
+      "average_solve_time": null,
+      "problems_attempted": 2
+    },
+    "stacks-queues": {
+      "mastery_level": 0.0,
+      "problems_solved": 0,
+      "total_problems": 0,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": null,
+      "first_attempt": null,
+      "practice_sessions": 0,
+      "total_time_spent": 0,
+      "average_solve_time": null
+    },
+    "trees-graphs": {
+      "mastery_level": 0.0,
+      "problems_solved": 0,
+      "total_problems": 0,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": null,
+      "first_attempt": null,
+      "practice_sessions": 0,
+      "total_time_spent": 0,
+      "average_solve_time": null
+    },
+    "dynamic-programming": {
+      "mastery_level": 0.0,
+      "problems_solved": 0,
+      "total_problems": 0,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": null,
+      "first_attempt": null,
+      "practice_sessions": 0,
+      "total_time_spent": 0,
+      "average_solve_time": null
+    },
+    "sorting-searching": {
+      "mastery_level": 0.0,
+      "problems_solved": 0,
+      "total_problems": 0,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": null,
+      "first_attempt": null,
+      "practice_sessions": 0,
+      "total_time_spent": 0,
+      "average_solve_time": null
+    },
+    "greedy-algorithms": {
+      "mastery_level": 0.0,
+      "problems_solved": 0,
+      "total_problems": 0,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": null,
+      "first_attempt": null,
+      "practice_sessions": 0,
+      "total_time_spent": 0,
+      "average_solve_time": null
+    },
+    "backtracking": {
+      "mastery_level": 0.0,
+      "problems_solved": 0,
+      "total_problems": 0,
+      "weak_concepts": [],
+      "strong_concepts": [],
+      "last_practiced": null,
+      "first_attempt": null,
+      "practice_sessions": 0,
+      "total_time_spent": 0,
+      "average_solve_time": null
+    }
+  },
+  "problems": {
+    "two_sum": {
+      "topic": "arrays-hashing",
+      "difficulty": "easy",
+      "attempts": 0,
+      "solved": false,
+      "best_time": null,
+      "average_time": null,
+      "success_rate": 0.0,
+      "last_attempt": null,
+      "next_review": null,
+      "review_interval": 1,
+      "consecutive_successes": 0,
+      "concepts_learned": [],
+      "mistakes_made": [],
+      "approach_used": null,
+      "notes": ""
+    },
+    "reverse_linked_list": {
+      "topic": "linked-lists",
+      "difficulty": "easy",
+      "attempts": 0,
+      "solved": false,
+      "best_time": null,
+      "average_time": null,
+      "success_rate": 0.0,
+      "last_attempt": null,
+      "next_review": null,
+      "review_interval": 1,
+      "consecutive_successes": 0,
+      "concepts_learned": [],
+      "mistakes_made": [],
+      "approach_used": null,
+      "notes": ""
+    },
+    "206_reverse_linked_list": {
+      "topic": "linked-lists",
+      "attempts": 1,
+      "solved": true,
+      "approaches_tried": [
+        "recursion",
+        "iteration"
+      ],
+      "last_attempt": "2026-01-18T11:23:16.202442"
+    }
+  },
+  "review_queue": [],
+  "spaced_repetition": {
+    "intervals": [
+      1,
+      3,
+      7,
+      14,
+      30,
+      90
+    ],
+    "success_multiplier": 1.3,
+    "failure_reset": true,
+    "min_interval": 1,
+    "max_interval": 365
+  },
+  "learning_preferences": {
+    "preferred_difficulty": "mixed",
+    "daily_goal": 2,
+    "session_length_target": 30,
+    "reminder_enabled": true,
+    "auto_review": true
+  },
+  "achievements": {
+    "first_problem": false,
+    "daily_streak_7": false,
+    "daily_streak_30": false,
+    "topic_mastery": [],
+    "speed_demon": false,
+    "problem_count_milestones": {
+      "10": false,
+      "25": false,
+      "50": false,
+      "100": false
+    }
+  },
+  "session_history": [
+    {
+      "timestamp": "2026-01-18T11:23:16.202422",
+      "problem": "206_reverse_linked_list",
+      "topic": "linked-lists",
+      "approaches": [
+        "recursion",
+        "iteration"
+      ],
+      "result": "solved"
+    }
+  ]
+}

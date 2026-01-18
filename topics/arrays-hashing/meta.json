@@ -1,0 +1,59 @@
+{
+  "topic": "Arrays & Hashing",
+  "category": "fundamental",
+  "description": "Array manipulation, hash tables, two pointers, sliding window",
+  "difficulty_range": "Easy to Hard",
+  "prerequisites": ["basic-programming", "iteration-concepts"],
+  "related_topics": ["strings", "two-pointers", "sliding-window"],
+
+  "progress": {
+    "mastery_level": 0.0,
+    "problems_solved": 0,
+    "total_problems": 0,
+    "last_practiced": null,
+    "first_attempt": null,
+    "practice_sessions": 0
+  },
+
+  "weak_concepts": [],
+  "strong_concepts": [],
+
+  "problem_categories": {
+    "hash_map_lookup": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "two_pointers": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "sliding_window": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "frequency_counting": {
+      "problems": [],
+      "mastery": 0.0
+    },
+    "prefix_sums": {
+      "problems": [],
+      "mastery": 0.0
+    }
+  },
+
+  "learning_path": [
+    "two_sum",
+    "contains_duplicate",
+    "valid_anagram",
+    "group_anagrams",
+    "top_k_frequent",
+    "product_except_self",
+    "longest_consecutive",
+    "three_sum",
+    "container_with_water",
+    "sliding_window_maximum"
+  ],
+
+  "companies": ["Google", "Meta", "Amazon", "Microsoft", "Apple"],
+  "interview_frequency": "Very High"
+}
