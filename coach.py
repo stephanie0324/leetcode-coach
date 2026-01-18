@@ -418,77 +418,84 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
     approaches = extract_solution_approach(code, ai_feedback)
     approach_str = ", ".join(approaches).replace("_", " ").title()
 
-    # Extract structured AI feedback
-    feedback_lines = ai_feedback.split('\n')
+    # Extract structured AI feedback with better parsing
     working_well = "Good implementation approach"
     improvements = "Consider edge cases and error handling"
     optimization = "Look for opportunities to improve efficiency"
 
-    for line in feedback_lines:
-        line = line.strip()
-        if line.startswith("✅") and "working well:" in line:
-            idx = feedback_lines.index(line)
-            if idx + 1 < len(feedback_lines):
-                working_well = feedback_lines[idx + 1].strip()
-        elif line.startswith("⚠️") and "could be improved:" in line:
-            idx = feedback_lines.index(line)
-            if idx + 1 < len(feedback_lines):
-                improvements = feedback_lines[idx + 1].strip()
-        elif line.startswith("🚀") and "Optimization opportunity:" in line:
-            idx = feedback_lines.index(line)
-            if idx + 1 < len(feedback_lines):
-                optimization = feedback_lines[idx + 1].strip()
+    # Parse AI feedback more reliably
+    if "✅" in ai_feedback:
+        match = re.search(r"✅[^:]*:\s*(.*?)(?=⚠️|🚀|$)", ai_feedback, re.DOTALL)
+        if match:
+            working_well = match.group(1).strip()
+
+    if "⚠️" in ai_feedback:
+        match = re.search(r"⚠️[^:]*:\s*(.*?)(?=🚀|✅|$)", ai_feedback, re.DOTALL)
+        if match:
+            improvements = match.group(1).strip()
+
+    if "🚀" in ai_feedback:
+        match = re.search(r"🚀[^:]*:\s*(.*?)(?=✅|⚠️|$)", ai_feedback, re.DOTALL)
+        if match:
+            optimization = match.group(1).strip()
 
     notes_file = f"topics/{topic}/notes/session-notes.md"
 
-    # Read existing content and extract any personal notes
-    existing_personal_notes = ""
+    # Read existing content
+    existing_content = ""
     try:
         with open(notes_file, 'r') as f:
             existing_content = f.read()
-
-        # Extract existing personal notes if any
-        personal_notes_match = re.search(rf"### {re.escape(date_str)} - {re.escape(problem_name)}.*?#### Personal Reflection\n\*(.*?)\*", existing_content, re.DOTALL)
-        if personal_notes_match:
-            existing_personal_notes = personal_notes_match.group(1).strip()
-
     except FileNotFoundError:
-        existing_content = ""
+        pass
 
-    # Create the consolidated note entry
-    difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
+    # Extract all personal notes for this problem from existing entries (both old and new format)
+    all_personal_notes = []
 
-    # Remove old duplicate entries for this problem and preserve personal notes
-    if existing_content:
-        # Remove all existing entries for this problem but preserve personal notes
-        all_personal_notes = []
-        pattern = rf"### \d{{4}}-\d{{2}}-\d{{2}} - {re.escape(problem_name)}.*?---"
+    # Pattern for both old and new format entries
+    old_pattern = rf"### \d{{4}}-\d{{2}}-\d{{2}} - {re.escape(problem_name)}.*?(?=###|\Z)"
+    new_pattern = rf"### \d{{4}}-\d{{2}}-\d{{2}} - {re.escape(problem_name)}.*?(?=###|\Z)"
+
+    for pattern in [old_pattern, new_pattern]:
         matches = re.finditer(pattern, existing_content, re.DOTALL)
-
         for match in matches:
             entry = match.group(0)
-            personal_match = re.search(r"#### Personal Reflection\n\*(.*?)\*", entry, re.DOTALL)
-            if personal_match and personal_match.group(1).strip() and not personal_match.group(1).strip().startswith("Add your thoughts"):
-                all_personal_notes.append(personal_match.group(1).strip())
 
-        # Remove all old entries for this problem
-        existing_content = re.sub(pattern, "", existing_content, flags=re.DOTALL)
+            # Look for personal reflection/notes in different formats
+            personal_patterns = [
+                r"#### Personal Reflection\n\*([^*]+)\*",
+                r"#### Personal Notes\n\*([^*]+)\*",
+                r"#### Personal Reflection\n([^#\n]+)",
+                r"#### Personal Notes\n([^#\n]+)"
+            ]
 
-        # Combine all personal notes
-        if all_personal_notes:
-            existing_personal_notes = " | ".join(all_personal_notes)
+            for p_pattern in personal_patterns:
+                p_match = re.search(p_pattern, entry)
+                if (p_match and p_match.group(1).strip() and
+                    not p_match.group(1).strip().startswith("Add your thoughts")):
+                    all_personal_notes.append(p_match.group(1).strip())
 
-    # Create new consolidated entry
-    personal_notes_section = f"*{existing_personal_notes}*" if existing_personal_notes else "*Add your thoughts here: What was challenging? What did you learn?*"
+    # Remove all existing entries for this problem
+    if existing_content:
+        existing_content = re.sub(old_pattern, "", existing_content, flags=re.DOTALL)
+        existing_content = re.sub(new_pattern, "", existing_content, flags=re.DOTALL)
+        # Clean up extra newlines
+        existing_content = re.sub(r'\n\n\n+', '\n\n', existing_content)
 
+    # Combine personal notes
+    personal_notes_text = " | ".join(set(all_personal_notes)) if all_personal_notes else "Add your thoughts here: What was challenging? What did you learn?"
+
+    # Create difficulty emoji
+    difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
+
+    # Create new consolidated entry with improved format
     new_entry = f"""
 ### {date_str} - {problem_name}
 **Time**: {time_str} | **Result**: {result} | **Approach**: {approach_str} | **Difficulty**: {difficulty_emoji} {difficulty}
 
 <details>
-<summary><strong>📋 Solution Details</strong></summary>
+<summary><strong>📋 Latest AI Feedback</strong></summary>
 
-#### Latest AI Feedback
 - ✅ **What's working:** {working_well}
 - ⚠️ **Could improve:** {improvements}
 - 🚀 **Optimization:** {optimization}
@@ -496,37 +503,43 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
 </details>
 
 #### Personal Notes
-{personal_notes_section}
+*{personal_notes_text}*
 
 ---
 """
 
-    # Insert the new entry
+    # Handle file creation/update
     if not existing_content.strip():
-        # Create new file
-        updated_content = f"""# {topic.replace('-', ' & ').title()} - Learning Journal
+        # Create new file with proper header
+        final_content = f"""# {topic.replace('-', ' & ').title()} - Learning Journal
 
 *Your practice journey with consolidated notes*
 
 ---
 {new_entry}"""
     else:
-        # Insert after header
+        # Insert new entry at the beginning after header
         lines = existing_content.split('\n')
-        # Find where to insert (after the header section)
-        insert_pos = 4
+        insert_pos = 0
+
+        # Find header end
         for i, line in enumerate(lines):
-            if line.strip() == "---" and i < 10:  # Header separator
+            if line.strip() == "---" and i > 2:
                 insert_pos = i + 1
                 break
 
-        lines.insert(insert_pos, new_entry)
-        updated_content = '\n'.join(lines)
+        if insert_pos == 0:
+            insert_pos = 4  # Fallback
 
-    # Write updated content
+        lines.insert(insert_pos, new_entry.strip())
+        final_content = '\n'.join(lines)
+
+    # Write the file
     try:
+        os.makedirs(os.path.dirname(notes_file), exist_ok=True)
         with open(notes_file, 'w') as f:
-            f.write(updated_content)
+            f.write(final_content)
+        click.echo(f"📝 Updated session notes for {problem_name}")
     except Exception as e:
         click.echo(f"⚠️ Could not update session notes: {e}")
 
