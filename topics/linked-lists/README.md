@@ -1,103 +1,71 @@
 # Linked Lists
 
 **Topic Category**: Linear Data Structures
-**Difficulty Range**: Easy to Hard
-**Prerequisites**: Understanding of pointers/references, basic recursion
+**Prerequisites**: Understanding of pointers/references
 
 ## Overview
 
-Linked List problems focus on manipulating nodes connected through pointers. Unlike arrays, linked lists offer dynamic size and efficient insertion/deletion, but lack random access. These problems are fundamental for understanding pointer manipulation and form the basis for more complex data structures.
+Linked List problems focus on manipulating nodes connected through pointers. These problems are fundamental for understanding pointer manipulation and form the basis for more complex data structures.
 
 **Key Focus Areas:**
 - Pointer manipulation and traversal
 - Two-pointer techniques (fast/slow, distance)
 - Recursive vs iterative approaches
 - In-place modifications
-- Cycle detection and handling
 
-## Key Concepts
+## Essential Patterns
 
-### 1. Node Structure
+### Node Structure
 ```python
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
 ```
-- **Value**: Data stored in the node
-- **Next**: Reference to the next node (None for tail)
-- **Head**: Reference to the first node
 
-### 2. Traversal Patterns
-```python
-# Basic traversal
-current = head
-while current:
-    # Process current node
-    current = current.next
-
-# Traversal with index
-current, index = head, 0
-while current:
-    # Process current node at index
-    current = current.next
-    index += 1
-```
-
-### 3. Two Pointer Techniques
-- **Fast/Slow (Tortoise and Hare)**: Detect cycles, find middle
-- **Distance Pointers**: Find nth from end, remove nth node
-- **Parallel Traversal**: Compare two lists simultaneously
-
-## Common Problem Patterns
-
-### 🔄 **Reversal Pattern**
-*"Reverse the order of nodes in a linked list"*
-
-**When to recognize:**
-- "Reverse", "backward", "opposite order"
-- Need to change direction of pointers
-
-**Iterative Approach:**
+### Reversal Pattern
 ```python
 def reverse_list(head):
     prev = None
     current = head
-
     while current:
         next_temp = current.next  # Save next
         current.next = prev       # Reverse pointer
         prev = current           # Move prev forward
         current = next_temp      # Move current forward
-
     return prev  # New head
 ```
 
-**Recursive Approach:**
+### Two Pointers (Floyd's Algorithm)
 ```python
-def reverse_list_recursive(head):
-    if not head or not head.next:
-        return head
-
-    new_head = reverse_list_recursive(head.next)
-    head.next.next = head  # Reverse the pointer
-    head.next = None       # Break old connection
-
-    return new_head
+def find_middle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next        # Move 1 step
+        fast = fast.next.next   # Move 2 steps
+    return slow  # Slow is at middle
 ```
 
-**Time**: O(n), **Space**: O(1) iterative, O(n) recursive
+## Quick Reference
 
-### 🐢🐰 **Two Pointers Pattern**
-*"Use fast and slow pointers for efficient traversal"*
+**Basic Traversal:**
+```python
+current = head
+while current:
+    # Process current node
+    current = current.next
+```
 
-**When to recognize:**
-- Find middle element
-- Detect cycles
-- Find nth from end
-- Check for palindrome
-
-**Fast/Slow (Floyd's Algorithm):**
+**Cycle Detection:**
+```python
+slow = fast = head
+while fast and fast.next:
+    slow = slow.next
+    fast = fast.next.next
+    if slow == fast:
+        return True  # Cycle found
+return False
+```
 ```python
 def find_middle(head):
     slow = fast = head

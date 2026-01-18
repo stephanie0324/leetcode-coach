@@ -2,6 +2,11 @@
 
 *Your practice journey with consolidated notes*
 
+## Learning Path
+**Beginner Path:** Reverse Linked List → Remove Duplicates → Merge Two Lists
+**Intermediate Path:** Remove Nth from End → Cycle Detection → Intersection of Lists
+**Advanced Path:** Reverse Nodes in k-Group → Copy List with Random Pointer
+
 ---
 
 <details>

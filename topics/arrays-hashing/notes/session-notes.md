@@ -2,6 +2,11 @@
 
 *Your practice journey with consolidated notes*
 
+## Learning Path
+**Beginner Path:** Two Sum → Contains Duplicate → Valid Anagram
+**Intermediate Path:** Longest Substring → Product of Array → Top K Frequent
+**Advanced Path:** Sliding Window Maximum → Subarray Sum Equals K
+
 ---
 
 <details>
