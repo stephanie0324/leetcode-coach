@@ -258,7 +258,7 @@ def claude_analyze(code, problem_description):
         "Content-Type": "application/json"
     }
 
-    prompt = f"""Analyze this LeetCode solution as an expert interviewer:
+    prompt = f"""Analyze this LeetCode solution as an expert coding interviewer. Provide structured feedback.
 
 PROBLEM:
 {problem_description}
@@ -266,11 +266,18 @@ PROBLEM:
 SOLUTION:
 {code}
 
-Please provide:
-1. ✅ What's correct about this solution
-2. ⚠️ Edge cases or issues you found
-3. 🚀 Optimization suggestions
-4. 📝 Code quality feedback
+Provide EXACTLY this format with specific, actionable feedback:
+
+✅ What's working well:
+[One specific thing that's implemented correctly]
+
+⚠️ What could be improved:
+[One specific issue with the current implementation - edge case, logic error, or inefficiency]
+
+🚀 Optimization opportunity:
+[One specific way to make the code better - performance, readability, or algorithm improvement]
+
+Keep each point concise and actionable. Focus on practical improvements the developer can make.
 
 Be specific and constructive. If the solution is incomplete, guide them on next steps."""
 
@@ -382,6 +389,22 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
     if "title" in problem_data:
         problem_name = problem_data["title"]
 
+    # Extract difficulty level
+    difficulty = "Medium"  # Default
+    if "difficulty" in problem_data:
+        difficulty = problem_data["difficulty"]
+    else:
+        # Try to detect from file content or filename
+        try:
+            with open(filename, 'r') as f:
+                content = f.read()
+            if "(Easy)" in content or "easy" in filename.lower():
+                difficulty = "Easy"
+            elif "(Hard)" in content or "hard" in filename.lower():
+                difficulty = "Hard"
+        except:
+            pass
+
     # Get current date and time
     from datetime import datetime
     now = datetime.now()
@@ -395,30 +418,46 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
     approaches = extract_solution_approach(code, ai_feedback)
     approach_str = ", ".join(approaches).replace("_", " ").title()
 
-    # Extract key points from AI feedback
+    # Extract structured AI feedback (using new format)
     feedback_lines = ai_feedback.split('\n')
-    positives = [line for line in feedback_lines if '✅' in line]
-    warnings = [line for line in feedback_lines if '⚠️' in line or '❌' in line]
-    suggestions = [line for line in feedback_lines if '🚀' in line]
+    # Extract structured feedback from new format
+    working_well = ""
+    improvements = ""
+    optimization = ""
 
-    # Create session entry
+    for line in feedback_lines:
+        line = line.strip()
+        if line.startswith("✅") and "working well:" in line:
+            # Get the next line after this header
+            idx = feedback_lines.index(line)
+            if idx + 1 < len(feedback_lines):
+                working_well = feedback_lines[idx + 1].strip()
+        elif line.startswith("⚠️") and "could be improved:" in line:
+            # Get the next line after this header
+            idx = feedback_lines.index(line)
+            if idx + 1 < len(feedback_lines):
+                improvements = feedback_lines[idx + 1].strip()
+        elif line.startswith("🚀") and "Optimization opportunity:" in line:
+            # Get the next line after this header
+            idx = feedback_lines.index(line)
+            if idx + 1 < len(feedback_lines):
+                optimization = feedback_lines[idx + 1].strip()
+
+    # Create session entry with difficulty level
     session_entry = f"""
-### {date_str} - {problem_name}
+### {date_str} - {problem_name} ({difficulty})
 **Time**: {time_str} | **Result**: {result} | **Approach**: {approach_str}
 
 #### Solution Summary
 - Implemented using {approach_str.lower()} approach
 - Code length: {len(code.split())} words, {len(code.splitlines())} lines
+- Difficulty: {difficulty}
 
 #### AI Feedback Highlights
+- ✅ What's working: {working_well if working_well else 'Good implementation approach'}
+- ⚠️ Could improve: {improvements if improvements else 'Consider edge cases and error handling'}
+- 🚀 Optimization: {optimization if optimization else 'Look for opportunities to improve efficiency'}
 """
-
-    if positives:
-        session_entry += "".join(f"- {line.strip()}\n" for line in positives[:3])
-    if warnings:
-        session_entry += "".join(f"- {line.strip()}\n" for line in warnings[:2])
-    if suggestions:
-        session_entry += "".join(f"- {line.strip()}\n" for line in suggestions[:2])
 
     session_entry += f"""
 #### Personal Reflection
