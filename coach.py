@@ -379,7 +379,7 @@ def extract_solution_approach(code, ai_feedback):
     return detected_approaches or ["unknown"]
 
 def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken=None):
-    """Generate and append session notes to the appropriate topic file - with smart merging."""
+    """Generate session notes with smart deduplication and clean formatting."""
     topic = detect_problem_topic(filename)
     if topic == "unknown":
         return
@@ -418,11 +418,11 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
     approaches = extract_solution_approach(code, ai_feedback)
     approach_str = ", ".join(approaches).replace("_", " ").title()
 
-    # Extract structured AI feedback (using new format)
+    # Extract structured AI feedback
     feedback_lines = ai_feedback.split('\n')
-    working_well = ""
-    improvements = ""
-    optimization = ""
+    working_well = "Good implementation approach"
+    improvements = "Consider edge cases and error handling"
+    optimization = "Look for opportunities to improve efficiency"
 
     for line in feedback_lines:
         line = line.strip()
@@ -441,39 +441,86 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
 
     notes_file = f"topics/{topic}/notes/session-notes.md"
 
-    # Read existing content
+    # Read existing content and extract any personal notes
+    existing_personal_notes = ""
     try:
         with open(notes_file, 'r') as f:
             existing_content = f.read()
-    except FileNotFoundError:
-        existing_content = f"""# {topic.replace('-', ' & ').title()} - Learning Journal
 
-*Your practice journey with detailed learning progression*
+        # Extract existing personal notes if any
+        personal_notes_match = re.search(rf"### {re.escape(date_str)} - {re.escape(problem_name)}.*?#### Personal Reflection\n\*(.*?)\*", existing_content, re.DOTALL)
+        if personal_notes_match:
+            existing_personal_notes = personal_notes_match.group(1).strip()
+
+    except FileNotFoundError:
+        existing_content = ""
+
+    # Create the consolidated note entry
+    difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
+
+    # Remove old duplicate entries for this problem and preserve personal notes
+    if existing_content:
+        # Remove all existing entries for this problem but preserve personal notes
+        all_personal_notes = []
+        pattern = rf"### \d{{4}}-\d{{2}}-\d{{2}} - {re.escape(problem_name)}.*?---"
+        matches = re.finditer(pattern, existing_content, re.DOTALL)
+
+        for match in matches:
+            entry = match.group(0)
+            personal_match = re.search(r"#### Personal Reflection\n\*(.*?)\*", entry, re.DOTALL)
+            if personal_match and personal_match.group(1).strip() and not personal_match.group(1).strip().startswith("Add your thoughts"):
+                all_personal_notes.append(personal_match.group(1).strip())
+
+        # Remove all old entries for this problem
+        existing_content = re.sub(pattern, "", existing_content, flags=re.DOTALL)
+
+        # Combine all personal notes
+        if all_personal_notes:
+            existing_personal_notes = " | ".join(all_personal_notes)
+
+    # Create new consolidated entry
+    personal_notes_section = f"*{existing_personal_notes}*" if existing_personal_notes else "*Add your thoughts here: What was challenging? What did you learn?*"
+
+    new_entry = f"""
+### {date_str} - {problem_name}
+**Time**: {time_str} | **Result**: {result} | **Approach**: {approach_str} | **Difficulty**: {difficulty_emoji} {difficulty}
+
+<details>
+<summary><strong>📋 Solution Details</strong></summary>
+
+#### Latest AI Feedback
+- ✅ **What's working:** {working_well}
+- ⚠️ **Could improve:** {improvements}
+- 🚀 **Optimization:** {optimization}
+
+</details>
+
+#### Personal Notes
+{personal_notes_section}
 
 ---
-
 """
 
-    # Check if this problem already exists in notes
-    existing_problem_match = re.search(f"## 🎯 {re.escape(problem_name)}", existing_content)
+    # Insert the new entry
+    if not existing_content.strip():
+        # Create new file
+        updated_content = f"""# {topic.replace('-', ' & ').title()} - Learning Journal
 
-    if existing_problem_match:
-        # Update existing problem entry
-        updated_content = update_existing_problem_entry(
-            existing_content, problem_name, difficulty, approaches,
-            date_str, time_str, result, working_well, improvements, optimization
-        )
+*Your practice journey with consolidated notes*
+
+---
+{new_entry}"""
     else:
-        # Create new problem entry with expandable format
-        new_problem_entry = create_new_problem_entry(
-            problem_name, difficulty, approaches, date_str, time_str,
-            result, working_well, improvements, optimization
-        )
-
         # Insert after header
         lines = existing_content.split('\n')
-        header_end = 4  # After header and separator
-        lines.insert(header_end, new_problem_entry)
+        # Find where to insert (after the header section)
+        insert_pos = 4
+        for i, line in enumerate(lines):
+            if line.strip() == "---" and i < 10:  # Header separator
+                insert_pos = i + 1
+                break
+
+        lines.insert(insert_pos, new_entry)
         updated_content = '\n'.join(lines)
 
     # Write updated content
@@ -482,134 +529,6 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
             f.write(updated_content)
     except Exception as e:
         click.echo(f"⚠️ Could not update session notes: {e}")
-
-def create_new_problem_entry(problem_name, difficulty, approaches, date_str, time_str, result, working_well, improvements, optimization):
-    """Create a new problem entry with beautiful formatting."""
-    difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
-    result_emoji = "✅" if result == "✅ Solved" else "🔄"
-
-    return f"""## 🎯 {problem_name}
-
-> {difficulty_emoji} **{difficulty}** | {result_emoji} **Current Status: {result.replace('✅ ', '').replace('🔄 ', '')}** | 📅 **Last Practiced:** {date_str}
-
-### 🧭 Learning Journey
-
-<details>
-<summary><strong>📈 Practice Sessions</strong></summary>
-
-#### Session {date_str}
-- ⏱️ **Time:** {time_str}
-- 🛠️ **Approach:** {', '.join(approaches).replace('_', ' ').title()}
-- 🎯 **Result:** {result}
-
-</details>
-
-### 💡 Key Insights
-
-<details>
-<summary><strong>🤖 Latest AI Feedback</strong></summary>
-
-> #### What's Working Well
-> ✅ {working_well if working_well else 'Good implementation approach'}
-
-> #### Areas for Improvement
-> ⚠️ {improvements if improvements else 'Consider edge cases and error handling'}
-
-> #### Optimization Opportunities
-> 🚀 {optimization if optimization else 'Look for opportunities to improve efficiency'}
-
-</details>
-
-### 📝 Personal Learning Notes
-
-<details>
-<summary><strong>🧠 My Insights & Reflections</strong></summary>
-
-*Add your thoughts here: What was challenging? What patterns did you notice? What would you do differently next time?*
-
-#### Key Takeaways
--
-
-#### Patterns Learned
--
-
-#### Next Steps
--
-
-</details>
-
-### 🔗 Implementation History
-- **{date_str}:** {', '.join(approaches).replace('_', ' ').title()} approach
-
----
-
-"""
-
-def update_existing_problem_entry(content, problem_name, difficulty, approaches, date_str, time_str, result, working_well, improvements, optimization):
-    """Update existing problem entry with new practice session."""
-    difficulty_emoji = {"Easy": "🟢", "Medium": "🟡", "Hard": "🔴"}.get(difficulty, "⚪")
-    result_emoji = "✅" if result == "✅ Solved" else "🔄"
-
-    # Update the main header line with latest status and date
-    header_pattern = f"## 🎯 {re.escape(problem_name)}"
-    new_header = f"## 🎯 {problem_name}\n\n> {difficulty_emoji} **{difficulty}** | {result_emoji} **Current Status: {result.replace('✅ ', '').replace('🔄 ', '')}** | 📅 **Last Practiced:** {date_str}"
-
-    content = re.sub(
-        f"{header_pattern}.*?(?=###)",
-        f"{new_header}\n\n### 🧭 Learning Journey\n\n",
-        content,
-        flags=re.DOTALL
-    )
-
-    # Add new session to practice sessions (insert after sessions summary line)
-    new_session = f"""#### Session {date_str}
-- ⏱️ **Time:** {time_str}
-- 🛠️ **Approach:** {', '.join(approaches).replace('_', ' ').title()}
-- 🎯 **Result:** {result}
-
-"""
-
-    # Insert the new session right after the practice sessions details opening
-    sessions_pattern = f"({re.escape('<summary><strong>📈 Practice Sessions</strong></summary>')})"
-    content = re.sub(
-        sessions_pattern,
-        f"\\1\n\n{new_session}",
-        content
-    )
-
-    # Update the AI feedback section with latest feedback
-    ai_feedback_section = f"""
-> #### What's Working Well
-> ✅ {working_well if working_well else 'Good implementation approach'}
-
-> #### Areas for Improvement
-> ⚠️ {improvements if improvements else 'Consider edge cases and error handling'}
-
-> #### Optimization Opportunities
-> 🚀 {optimization if optimization else 'Look for opportunities to improve efficiency'}
-"""
-
-    # Replace the AI feedback content
-    content = re.sub(
-        r"(> #### What's Working Well.*?)(?=</details>)",
-        ai_feedback_section + "\n",
-        content,
-        flags=re.DOTALL
-    )
-
-    # Update implementation history
-    implementation_line = f"- **{date_str}:** {', '.join(approaches).replace('_', ' ').title()} approach"
-
-    if "### 🔗 Implementation History" in content:
-        # Add to existing history
-        history_pattern = "(### 🔗 Implementation History\n)"
-        content = re.sub(
-            history_pattern,
-            f"\\1{implementation_line}\n",
-            content
-        )
-
-    return content
 
 def update_progress_tracking(filename, code, ai_feedback, approaches):
     """Update progress.json with session data."""
