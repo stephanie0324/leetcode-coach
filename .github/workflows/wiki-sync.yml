@@ -53,7 +53,7 @@ jobs:
         git config --global init.defaultBranch main
 
         # Clone wiki repository
-        git clone "https://$GITHUB_TOKEN@github.com/${{ github.repository }}.wiki.git" wiki-repo
+        git clone "https://x-access-token:$GITHUB_TOKEN@github.com/${{ github.repository }}.wiki.git" wiki-repo
 
         # Copy prepared content
         cp -r wiki-content/* wiki-repo/
