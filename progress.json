@@ -12,15 +12,16 @@
   "topics": {
     "arrays-hashing": {
       "mastery_level": 0.0,
-      "problems_solved": 0,
+      "problems_solved": 1,
       "total_problems": 1,
       "weak_concepts": [],
       "strong_concepts": [],
-      "last_practiced": null,
+      "last_practiced": "2026-01-18T20:26:02.892749",
       "first_attempt": null,
-      "practice_sessions": 0,
+      "practice_sessions": 2,
       "total_time_spent": 0,
-      "average_solve_time": null
+      "average_solve_time": null,
+      "problems_attempted": 2
     },
     "linked-lists": {
       "mastery_level": 0.0,
@@ -152,6 +153,18 @@
         "iteration"
       ],
       "last_attempt": "2026-01-18T11:23:16.202442"
+    },
+    "001_two_sum": {
+      "topic": "arrays-hashing",
+      "attempts": 2,
+      "solved": true,
+      "approaches_tried": [
+        "hash_map",
+        "two_pointers",
+        "iteration",
+        "sorting"
+      ],
+      "last_attempt": "2026-01-18T20:26:02.892719"
     }
   },
   "review_queue": [],
@@ -197,6 +210,27 @@
       "approaches": [
         "recursion",
         "iteration"
+      ],
+      "result": "solved"
+    },
+    {
+      "timestamp": "2026-01-18T20:22:27.919076",
+      "problem": "001_two_sum",
+      "topic": "arrays-hashing",
+      "approaches": [
+        "hash_map",
+        "two_pointers",
+        "iteration",
+        "sorting"
+      ],
+      "result": "solved"
+    },
+    {
+      "timestamp": "2026-01-18T20:26:02.892702",
+      "problem": "001_two_sum",
+      "topic": "arrays-hashing",
+      "approaches": [
+        "hash_map"
       ],
       "result": "solved"
     }

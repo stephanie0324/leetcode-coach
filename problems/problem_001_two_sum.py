@@ -27,15 +27,16 @@ Constraints:
 - Only one valid answer exists.
 """
 
-
-# HINTS:
-# 1. Try using a hash map to store numbers you've seen
-# 2. For each number, check if (target - number) exists in the map
-# 3. Don't forget to handle the case where the same element can't be used twice
 def two_sum(nums, target):
     """
     Your solution here
     """
+    dict_ = {}
+    for i in range(len(nums)):
+        complement = target - nums[i]
+        if complement in dict_:
+            return [dict_[complement], i]
+        dict_[nums[i]] = i
     pass
 
 # Test cases

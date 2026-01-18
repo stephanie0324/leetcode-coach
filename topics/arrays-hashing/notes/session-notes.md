@@ -2,6 +2,50 @@
 
 *Auto-generated practice log. Personal insights and AI feedback from each session.*
 
+### 2026-01-18 - Two Sum
+**Time**: Unknown | **Result**: ✅ Solved | **Approach**: Hash Map
+
+#### Solution Summary
+- Implemented using hash map approach
+- Code length: 252 words, 62 lines
+
+#### AI Feedback Highlights
+- 1. ✅ What's correct about this solution:
+- 2. ⚠️ Edge cases or issues:
+- 3. 🚀 Optimization suggestions:
+
+#### Personal Reflection
+*Add your thoughts here: What was challenging? What did you learn?*
+
+#### Related Concepts
+- Patterns: hash_map
+- Topic: Arrays & Hashing
+
+---
+
+
+### 2026-01-18 - Two Sum
+**Time**: Unknown | **Result**: ✅ Solved | **Approach**: Hash Map, Two Pointers, Iteration, Sorting
+
+#### Solution Summary
+- Implemented using hash map, two pointers, iteration, sorting approach
+- Code length: 264 words, 67 lines
+
+#### AI Feedback Highlights
+- 1. ✅ What's correct about this solution:
+- 2. ⚠️ Edge cases or issues:
+- 3. 🚀 Optimization suggestions:
+
+#### Personal Reflection
+*Add your thoughts here: What was challenging? What did you learn?*
+
+#### Related Concepts
+- Patterns: hash_map, two_pointers, iteration, sorting
+- Topic: Arrays & Hashing
+
+---
+
+
 ---
 
 ## Session Template
