@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pages: write
+      actions: read
 
     steps:
     - name: Checkout main repository
@@ -43,7 +45,7 @@ jobs:
 
     - name: Publish to GitHub Wiki
       env:
-        WIKI_TOKEN: ${{ secrets.WIKI_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # Configure git
         git config --global user.name "GitHub Actions"
@@ -51,7 +53,7 @@ jobs:
         git config --global init.defaultBranch main
 
         # Clone wiki repository
-        git clone "https://$WIKI_TOKEN@github.com/${{ github.repository }}.wiki.git" wiki-repo
+        git clone "https://$GITHUB_TOKEN@github.com/${{ github.repository }}.wiki.git" wiki-repo
 
         # Copy prepared content
         cp -r wiki-content/* wiki-repo/
