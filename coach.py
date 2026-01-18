@@ -443,15 +443,13 @@ def generate_session_notes(filename, code, ai_feedback, problem_data, time_taken
             if idx + 1 < len(feedback_lines):
                 optimization = feedback_lines[idx + 1].strip()
 
-    # Create session entry with difficulty level
+    # Create session entry with difficulty on main line
     session_entry = f"""
-### {date_str} - {problem_name} ({difficulty})
-**Time**: {time_str} | **Result**: {result} | **Approach**: {approach_str}
+### {date_str} - {problem_name}
+**Time**: {time_str} | **Result**: {result} | **Approach**: {approach_str} | **Difficulty**: {difficulty}
 
 #### Solution Summary
 - Implemented using {approach_str.lower()} approach
-- Code length: {len(code.split())} words, {len(code.splitlines())} lines
-- Difficulty: {difficulty}
 
 #### AI Feedback Highlights
 - ✅ What's working: {working_well if working_well else 'Good implementation approach'}
